@@ -1,6 +1,7 @@
+"use client";
 import {Box, Button, TextArea, TextField} from "@radix-ui/themes";
-import React from "react";
-
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 function page() {
 	return (
 		<Box className="max-w-xl space-y-3">
@@ -8,6 +9,7 @@ function page() {
 				<TextField.Slot></TextField.Slot>
 			</TextField.Root>
 			<TextArea placeholder="Reply to comment…" />
+			<SimpleMDE></SimpleMDE>
 			<Button>Submit</Button>
 		</Box>
 	);
