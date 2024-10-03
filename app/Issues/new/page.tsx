@@ -1,10 +1,11 @@
 "use client";
-import {Box, Button, TextArea, TextField} from "@radix-ui/themes";
+import {Box, Button, Callout, TextArea, TextField} from "@radix-ui/themes";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import {Controller, useForm} from "react-hook-form";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import {useState} from "react";
 interface Form {
 	title: string;
 	description: string;
@@ -13,31 +14,45 @@ interface Form {
 function page() {
 	const router = useRouter();
 	const {register, control, handleSubmit} = useForm<Form>();
+	const [error, setError] = useState("");
 	return (
-		<form
-			className="max-w-xl space-y-3"
-			onSubmit={handleSubmit(async (data) => {
-				await axios.post("/api/issues", data);
-				router.push("/Issues");
-			})}
-		>
-			<TextField.Root
-				placeholder="Search the docs…"
-				{...register("title")}
+		<div className="max-w-xl">
+			{error && (
+				<Callout.Root className="mb-5" color="red">
+					<Callout.Text>{error}</Callout.Text>
+				</Callout.Root>
+			)}
+			<form
+				className=" space-y-3"
+				onSubmit={handleSubmit(async (data) => {
+					try {
+						await axios.post("/api/issues", data);
+						router.push("/Issues");
+					} catch (error) {
+						setError("unexpected error hab");
+					}
+				})}
 			>
-				<TextField.Slot></TextField.Slot>
-			</TextField.Root>
-			<TextArea placeholder="Reply to comment…" />
-			<Controller
-				name="description"
-				control={control}
-				render={({field}) => (
-					<SimpleMDE placeholder="Description" {...field}></SimpleMDE>
-				)}
-			></Controller>
-			<SimpleMDE></SimpleMDE>
-			<Button>Submit</Button>
-		</form>
+				<TextField.Root
+					placeholder="Search the docs…"
+					{...register("title")}
+				>
+					<TextField.Slot></TextField.Slot>
+				</TextField.Root>
+				<TextArea placeholder="Reply to comment…" />
+				<Controller
+					name="description"
+					control={control}
+					render={({field}) => (
+						<SimpleMDE
+							placeholder="Description"
+							{...field}
+						></SimpleMDE>
+					)}
+				></Controller>
+				<Button>Submit</Button>
+			</form>
+		</div>
 	);
 }
 
