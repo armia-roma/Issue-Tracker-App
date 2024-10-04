@@ -35,6 +35,7 @@ function page() {
 		resolver: zodResolver(createIssueSchema),
 	});
 	const [error, setError] = useState("");
+	const [isSubmiting, setIsSubmiting] = useState(false);
 	return (
 		<div className="max-w-xl">
 			{error && (
@@ -46,9 +47,11 @@ function page() {
 				className=" space-y-3"
 				onSubmit={handleSubmit(async (data) => {
 					try {
+						setIsSubmiting(true);
 						await axios.post("/api/issues", data);
 						router.push("/Issues");
 					} catch (error) {
+						setIsSubmiting(false);
 						setError("unexpected error hab");
 					}
 				})}
@@ -73,7 +76,7 @@ function page() {
 				></Controller>
 
 				<ErrorMessage>{errors.description?.message}</ErrorMessage>
-				<Button>Submit</Button>
+				<Button loading={isSubmiting}>Submit</Button>
 			</form>
 		</div>
 	);
