@@ -17,10 +17,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {createIssueSchema} from "./../../validationSchemas";
 import {z} from "zod";
 import ErrorMessage from "@/app/components/ErrorMessage";
-interface Form {
-	title: string;
-	description: string;
-}
 
 type IssueForm = z.infer<typeof createIssueSchema>;
 
@@ -34,6 +30,16 @@ function page() {
 	} = useForm<IssueForm>({
 		resolver: zodResolver(createIssueSchema),
 	});
+	const onSubmit = handleSubmit(async (data) => {
+		try {
+			setIsSubmiting(true);
+			await axios.post("/api/issues", data);
+			router.push("/Issues");
+		} catch (error) {
+			setIsSubmiting(false);
+			setError("unexpected error hab");
+		}
+	});
 	const [error, setError] = useState("");
 	const [isSubmiting, setIsSubmiting] = useState(false);
 	return (
@@ -43,19 +49,7 @@ function page() {
 					<Callout.Text>{error}</Callout.Text>
 				</Callout.Root>
 			)}
-			<form
-				className=" space-y-3"
-				onSubmit={handleSubmit(async (data) => {
-					try {
-						setIsSubmiting(true);
-						await axios.post("/api/issues", data);
-						router.push("/Issues");
-					} catch (error) {
-						setIsSubmiting(false);
-						setError("unexpected error hab");
-					}
-				})}
-			>
+			<form className=" space-y-3" onSubmit={onSubmit}>
 				<TextField.Root
 					placeholder="Search the docs…"
 					{...register("title")}
