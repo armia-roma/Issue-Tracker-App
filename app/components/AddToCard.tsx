@@ -3,7 +3,12 @@ import React from "react";
 
 const AddToCard = () => {
 	return (
-		<button onClick={() => console.log("console.log()")}>AddToCard</button>
+		<button
+			className="px-5 py-5 border rounded-full text-2xl"
+			onClick={() => console.log("console.log()")}
+		>
+			AddToCard
+		</button>
 	);
 };
 
